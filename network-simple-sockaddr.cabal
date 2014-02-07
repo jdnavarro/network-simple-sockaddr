@@ -1,0 +1,22 @@
+name:                network-simple-sockaddr
+version:             0.1
+synopsis:            network-simple using resolved addresses
+description:         network-simple works with unresolved addresses. This
+                     module provides a close API expecting 'SockAddr'.
+homepage:            https://github.com/jdnavarro/network-simple-sockaddr
+license:             BSD3
+license-file:        LICENSE
+author:              Danny Navarro
+maintainer:          j@dannynavarro.net
+category:            Network
+build-type:          Simple
+-- extra-source-files:  
+cabal-version:       >=1.10
+
+library
+  exposed-modules:     Network.Simple.SockAddr
+  build-depends:       base >=4.6 && <4.7,
+                       bytestring,
+                       network
+  hs-source-dirs:      src
+  default-language:    Haskell2010
