@@ -11,7 +11,7 @@ module Network.Simple.SockAddr
   , recv
   ) where
 
-import Control.Monad (forever)
+import Control.Monad (forever, when)
 import Control.Exception (bracket, bracketOnError, throwIO)
 import Control.Concurrent (ThreadId, forkIO, forkFinally)
 import Data.ByteString (ByteString)
@@ -38,10 +38,15 @@ listen addr = bracket listen' NS.close
 
 bind :: SockAddr -> IO Socket
 bind addr = bracketOnError (newSocket addr) NS.close $ \sock -> do
-    NS.setSocketOption sock NS.NoDelay 1
-    NS.setSocketOption sock NS.ReuseAddr 1
+    let set so n = when (NS.isSupportedSocketOption so)
+                        (NS.setSocketOption sock so n)
+    when (isTCP addr) (set NS.NoDelay 1)
+    set NS.ReuseAddr 1
     NS.bindSocket sock addr
     return sock
+  where
+    isTCP (SockAddrUnix {}) = False
+    isTCP _                 = True
 
 acceptFork :: Socket -> (Socket -> IO ()) -> IO ThreadId
 acceptFork lsock k = do
