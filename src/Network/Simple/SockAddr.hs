@@ -26,7 +26,7 @@ import Network.Socket
 import Network.Socket.ByteString (recv)
 import qualified Network.Socket.ByteString as NSB
 
-serve :: SockAddr -> (Socket -> IO ()) -> IO ()
+serve :: SockAddr -> (SockAddr -> Socket -> IO ()) -> IO ()
 serve addr k = listen addr $ \sock -> forever $ acceptFork sock k
 
 listen :: SockAddr -> (Socket -> IO r) -> IO r
@@ -48,10 +48,11 @@ bind addr = bracketOnError (newSocket addr) NS.close $ \sock -> do
     isTCP (SockAddrUnix {}) = False
     isTCP _                 = True
 
-acceptFork :: Socket -> (Socket -> IO ()) -> IO ThreadId
+acceptFork :: Socket -> (SockAddr -> Socket -> IO ()) -> IO ThreadId
 acceptFork lsock k = do
-    (csock,_) <- NS.accept lsock
-    forkFinally (k csock) (\ea -> NS.close csock >> either throwIO return ea)
+    (csock,caddr) <- NS.accept lsock
+    forkFinally (k caddr csock)
+                (\ea -> NS.close csock >> either throwIO return ea)
 
 connect :: SockAddr -> (Socket -> IO r) -> IO r
 connect addr = bracket connect' NS.close
