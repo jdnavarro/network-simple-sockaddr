@@ -11,11 +11,12 @@ maintainer:          j@dannynavarro.net
 category:            Network
 build-type:          Simple
 -- extra-source-files:  
+tested-with:         GHC == 7.6.3, GHC == 7.8.0.20140204
 cabal-version:       >=1.10
 
 library
   exposed-modules:     Network.Simple.SockAddr
-  build-depends:       base >=4.6 && <4.7,
+  build-depends:       base >=4.6 && <4.8,
                        bytestring,
                        transformers,
                        exceptions,
