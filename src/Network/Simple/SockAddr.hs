@@ -30,7 +30,8 @@ import Control.Monad.Catch (MonadCatch, bracket, bracketOnError, throwM)
 
 serve :: (MonadIO m, MonadCatch m)
       => SockAddr
-      -> (forall m' . (Functor m', MonadIO m') => SockAddr -> Socket -> m' ())
+      -> (forall m' . (Functor m', MonadIO m', MonadCatch m')
+                   => SockAddr -> Socket -> m' ())
       -> m ()
 serve addr k = listen addr $ \sock -> forever $ acceptFork sock k
 
@@ -56,7 +57,8 @@ bind addr = bracketOnError (newSocket addr) (liftIO . NS.close)
 
 acceptFork :: (MonadIO m, MonadCatch m)
            => Socket
-           -> (forall m' . (Functor m', MonadIO m') => SockAddr -> Socket -> m' ())
+           -> (forall m' . (Functor m', MonadIO m', MonadCatch m')
+                        => SockAddr -> Socket -> m' ())
            -> m ThreadId
 acceptFork lsock k = liftIO $ do
     (csock,caddr) <- NS.accept lsock
@@ -72,7 +74,7 @@ connect addr = bracket connect' (liftIO . NS.close)
 
 connectFork :: MonadIO m
             => SockAddr
-            -> (forall m' . (Functor m', MonadIO m') => Socket -> m' ())
+            -> (forall m' . (Functor m', MonadIO m', MonadCatch m') => Socket -> m' ())
             -> m ThreadId
 connectFork addr k = liftIO . forkIO $ connect addr k
 
