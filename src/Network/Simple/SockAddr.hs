@@ -16,6 +16,7 @@ import Control.Monad (forever, when)
 import Control.Concurrent (ThreadId, forkIO, forkFinally)
 import Data.ByteString (ByteString)
 import Control.Monad.IO.Class (MonadIO, liftIO)
+import System.Directory (removeFile)
 import qualified Network.Socket as NS
 import Network.Socket
   ( SockAddr(SockAddrInet, SockAddrInet6, SockAddrUnix)
@@ -36,14 +37,14 @@ serve :: (MonadIO m, MonadCatch m)
 serve addr k = listen addr $ \sock -> forever $ acceptFork sock k
 
 listen :: (MonadIO m, MonadCatch m) => SockAddr -> (Socket -> m r) -> m r
-listen addr = bracket listen' (liftIO . NS.close)
+listen addr = bracket listen' (close addr)
   where
     listen' = liftIO $ do sock <- bind addr
                           NS.listen sock $ max 2048 NS.maxListenQueue
                           return sock
 
 bind :: (MonadIO m, MonadCatch m) => SockAddr -> m Socket
-bind addr = bracketOnError (newSocket addr) (liftIO . NS.close)
+bind addr = bracketOnError (newSocket addr) (close addr)
           $ \sock -> liftIO $ do
                 let set so n = when (NS.isSupportedSocketOption so)
                                     (NS.setSocketOption sock so n)
@@ -84,6 +85,11 @@ newSocket addr = liftIO $ NS.socket (fam addr) Stream defaultProtocol
     fam (SockAddrInet  {}) = AF_INET
     fam (SockAddrInet6 {}) = AF_INET6
     fam (SockAddrUnix  {}) = AF_UNIX
+
+close :: MonadIO m => SockAddr -> Socket -> m ()
+close (SockAddrUnix path) sock =
+    liftIO $ NS.close sock >> removeFile path
+close _ sock = liftIO $ NS.close sock
 
 send :: MonadIO m => Socket -> ByteString -> m ()
 send sock bs = liftIO $ NSB.sendAll sock bs
