@@ -69,6 +69,7 @@ connectFork :: MonadIO m
             -- ^ Computation taking the socket connection socket.
             -> m ThreadId
 connectFork addr k = liftIO . forkIO $ connect addr k
+{-# INLINABLE connectFork #-}
 
 -- * Server side
 
@@ -83,9 +84,9 @@ serve :: (MonadIO m, MonadCatch m)
       -- ^ Address to bind to.
       -> (forall m' . (Functor m', MonadIO m', MonadCatch m')
                    => SockAddr -> Socket -> m' ())
-       -- ^ Computation to run in a different thread
-       --   once an incoming connection is accepted. Takes the
-       --   the remote end address and the connection socket.
+      -- ^ Computation to run in a different thread
+      --   once an incoming connection is accepted. Takes the
+      --   the remote end address and the connection socket.
       -> m ()
 serve addr k = listen addr $ \sock -> forever $ acceptFork sock k
 
@@ -143,20 +144,25 @@ acceptFork lsock k = liftIO $ do
     (csock,caddr) <- NS.accept lsock
     forkFinally (k caddr csock)
                 (\ea -> NS.close csock >> either throwM return ea)
+{-# INLINABLE acceptFork #-}
+
 -- * Utils
 
 -- | Writes the given bytes to the socket.
 send :: MonadIO m => Socket -> ByteString -> m ()
 send sock bs = liftIO $ NSB.sendAll sock bs
+{-# INLINE send #-}
 
 -- | Read up to a limited number of bytes from a socket.
 recv :: MonadIO m => Socket -> Int -> m ByteString
 recv sock n = liftIO $ NSB.recv sock n
+{-# INLINE recv #-}
 
 -- | Close the 'Socket' and unlinks the 'SockAddr' for Unix sockets.
 close :: MonadIO m => SockAddr -> Socket -> m ()
 close (SockAddrUnix path) sock = liftIO $ NS.close sock >> removeFile path
 close _                   sock = liftIO $ NS.close sock
+{-# INLINE close #-}
 
 -- * Internal
 
@@ -166,3 +172,4 @@ newSocket addr = liftIO $ NS.socket (fam addr) Stream defaultProtocol
     fam (SockAddrInet  {}) = AF_INET
     fam (SockAddrInet6 {}) = AF_INET6
     fam (SockAddrUnix  {}) = AF_UNIX
+{-# INLINABLE newSocket #-}
