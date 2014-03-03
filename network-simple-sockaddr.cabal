@@ -18,7 +18,7 @@ description:
   Sockets@ are supported as well.
 source-repository head
   type: git
-  location: git://github.com/jdnavarro/network-simple-sockaddr.git
+  location: git@github.com:jdnavarro/network-simple-sockaddr.git
 
 library
   exposed-modules:     Network.Simple.SockAddr
