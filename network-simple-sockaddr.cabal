@@ -1,26 +1,33 @@
 name:                network-simple-sockaddr
 version:             0.1
-synopsis:            network-simple using resolved addresses
-description:         network-simple works with unresolved addresses. This
-                     module provides a close API expecting 'SockAddr'.
-homepage:            https://github.com/jdnavarro/network-simple-sockaddr
+cabal-version:       >=1.10
+tested-with:         GHC == 7.6.3
+build-type:          Simple
 license:             BSD3
 license-file:        LICENSE
 author:              Danny Navarro
 maintainer:          j@dannynavarro.net
 category:            Network
-build-type:          Simple
--- extra-source-files:  
-tested-with:         GHC == 7.6.3, GHC == 7.8.0.20140204
-cabal-version:       >=1.10
+homepage:            https://github.com/jdnavarro/network-simple-sockaddr
+bug-reports:         https://github.com/jdnavarro/network-simple-sockaddr/issues
+synopsis:            network-simple for resolved addresses
+description:
+  @network-simple@ works with 'HostName's which it automatically resolves. This
+  packages offers similar API but working with unresolved addresses in the form
+  of 'SockAddr'. In addition to 'IPv4' addresses, 'IPv6' and @Unix Domain
+  Sockets@ are supported as well.
+source-repository head
+  type: git
+  location: git://github.com/jdnavarro/network-simple-sockaddr.git
 
 library
   exposed-modules:     Network.Simple.SockAddr
   build-depends:       base >=4.6 && <4.8,
                        bytestring,
-                       transformers,
-                       network,
                        directory,
-                       exceptions
+                       transformers >=0.2,
+                       network >=2.4,
+                       exceptions >=0.3
   hs-source-dirs:      src
   default-language:    Haskell2010
+  ghc-options:         -Wall
