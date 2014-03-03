@@ -12,10 +12,11 @@ homepage:            https://github.com/jdnavarro/network-simple-sockaddr
 bug-reports:         https://github.com/jdnavarro/network-simple-sockaddr/issues
 synopsis:            network-simple for resolved addresses
 description:
-  @network-simple@ works with 'HostName's which it automatically resolves. This
-  packages offers similar API but working with unresolved addresses in the form
-  of 'SockAddr'. In addition to 'IPv4' addresses, 'IPv6' and @Unix Domain
-  Sockets@ are supported as well.
+  @<http://hackage.haskell.org/package/network-simple-0.3.0 network-simple>@
+  works by resolving specified 'HostName's. This packages offers similar API
+  but working with unresolved addresses in the form of 'SockAddr'. In addition to
+  'IPv4' addresses, 'IPv6' and @Unix Domain Sockets@ are supported as well.
+
 source-repository head
   type: git
   location: git@github.com:jdnavarro/network-simple-sockaddr.git

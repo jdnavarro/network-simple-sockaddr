@@ -3,7 +3,7 @@
 {-| This module offers the same API than @network-simple@ with the difference
     that it works on 'SockAddr' instead of @'HostName's@.
 
-    For a more detailed explanation check the documenation at
+    For a more detailed explanation of the API check the documenation at
     "Network.Simple.TCP".
 -}
 
