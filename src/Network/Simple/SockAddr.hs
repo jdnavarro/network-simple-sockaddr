@@ -1,10 +1,10 @@
 {-# LANGUAGE RankNTypes #-}
 
-{-| This module offers the same API than @network-simple@ with the difference
-    that it works on 'SockAddr' instead of @'HostName's@.
+{-| This is the same API as @network-simple@ with the difference
+    of working on 'SockAddr' instead of @'HostName's@.
 
-    For a more detailed explanation of the API check the documenation at
-    "Network.Simple.TCP".
+    For a more detailed explanation check
+    @<http://hackage.haskell.org/package/network-simple-0.3.0/docs/Network-Simple-TCP.html Network.Simple.TCP>@
 -}
 
 module Network.Simple.SockAddr
