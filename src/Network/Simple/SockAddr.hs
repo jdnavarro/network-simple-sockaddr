@@ -1,5 +1,3 @@
-{-# LANGUAGE RankNTypes #-}
-
 {-| This is the same API as @network-simple@ with the difference
     of working on 'SockAddr' instead of @'HostName's@.
 
@@ -40,7 +38,7 @@ import Network.Socket
   , defaultProtocol
   )
 import qualified Network.Socket.ByteString as NSB
-import Control.Monad.Catch (MonadCatch, bracket, bracketOnError, throwM)
+import Control.Monad.Catch (MonadCatch, MonadMask, bracket, bracketOnError, throwM)
 
 -- * Client side
 
@@ -48,7 +46,7 @@ import Control.Monad.Catch (MonadCatch, bracket, bracketOnError, throwM)
 
     The connection socket is closed when done or in case of exceptions.
 -}
-connect :: (MonadIO m, MonadCatch m)
+connect :: (MonadIO m, MonadMask m)
         => SockAddr
         -- ^ Server address.
         -> (Socket -> m r)
@@ -64,8 +62,7 @@ connect addr = bracket connect' (liftIO . NS.close)
 connectFork :: MonadIO m
             => SockAddr
             -- ^ Server address.
-            -> (forall m' . (Functor m', MonadIO m', MonadCatch m')
-                         => Socket -> m' ())
+            -> (Socket -> IO ())
             -- ^ Computation taking the socket connection socket.
             -> m ThreadId
 connectFork addr k = liftIO . forkIO $ connect addr k
@@ -79,11 +76,10 @@ connectFork addr k = liftIO . forkIO $ connect addr k
     Any acquired network resources are properly closed and discarded when done
     or in case of exceptions.
 -}
-serve :: (MonadIO m, MonadCatch m)
+serve :: (MonadIO m, MonadMask m)
       => SockAddr
       -- ^ Address to bind to.
-      -> (forall m' . (Functor m', MonadIO m', MonadCatch m')
-                   => SockAddr -> Socket -> m' ())
+      -> (SockAddr -> Socket -> IO ())
       -- ^ Computation to run in a different thread
       --   once an incoming connection is accepted. Takes the
       --   the remote end address and the connection socket.
@@ -94,7 +90,7 @@ serve addr k = listen addr $ \sock -> forever $ acceptFork sock k
 
     The listening socket is closed when done or in case of exceptions.
 -}
-listen :: (MonadIO m, MonadCatch m)
+listen :: (MonadIO m, MonadMask m)
        => SockAddr
        -- ^ Address to bind to.
        -> (Socket -> m r)
@@ -114,7 +110,7 @@ listen addr = bracket listen' (close addr)
    within a limited scope, and would like it to be closed immediately after its
    usage or in case of exceptions.
 -}
-bind :: (MonadIO m, MonadCatch m) => SockAddr -> m Socket
+bind :: (MonadIO m, MonadMask m) => SockAddr -> m Socket
 bind addr = bracketOnError (newSocket addr) (close addr)
           $ \sock -> liftIO $ do
                 let set so n = when (NS.isSupportedSocketOption so)
@@ -134,8 +130,7 @@ bind addr = bracketOnError (newSocket addr) (close addr)
 acceptFork :: (MonadIO m, MonadCatch m)
            => Socket
            -- ^ Listening and bound socket.
-           -> (forall m' . (Functor m', MonadIO m', MonadCatch m')
-                        => SockAddr -> Socket -> m' ())
+           -> (SockAddr -> Socket -> IO ())
            -- ^ Computation to run in a different thread
            --   once an incoming connection is accepted. Takes the
            --   remote end address and connection socket.
