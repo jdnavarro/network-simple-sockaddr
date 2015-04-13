@@ -1,7 +1,7 @@
 name:                network-simple-sockaddr
 version:             0.1
 cabal-version:       >=1.10
-tested-with:         GHC == 7.6.3
+tested-with:         GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.1
 build-type:          Simple
 license:             BSD3
 license-file:        LICENSE
@@ -11,11 +11,12 @@ category:            Network
 homepage:            https://github.com/jdnavarro/network-simple-sockaddr
 bug-reports:         https://github.com/jdnavarro/network-simple-sockaddr/issues
 synopsis:            network-simple for resolved addresses
+extra-source-files:  README.md
 description:
   @<http://hackage.haskell.org/package/network-simple-0.3.0 network-simple>@
-  works by resolving 'HostName's. This packages offers a similar API but
-  working with unresolved addresses in the form of 'SockAddr'. In addition to
-  'IPv4' addresses, 'IPv6' and @Unix Domain Sockets@ are also supported.
+  works by resolving @HostName@s. This packages offers a similar API but
+  working with unresolved addresses in the form of @SockAddr@. In addition to
+  @IPv4@ addresses, @IPv6@ and @Unix Domain Sockets@ are also supported.
 
 source-repository head
   type: git
