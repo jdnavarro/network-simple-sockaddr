@@ -1,5 +1,5 @@
 name:                network-simple-sockaddr
-version:             0.1
+version:             0.2
 cabal-version:       >=1.10
 tested-with:         GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.1
 build-type:          Simple
@@ -10,6 +10,7 @@ maintainer:          j@dannynavarro.net
 category:            Network
 homepage:            https://github.com/jdnavarro/network-simple-sockaddr
 bug-reports:         https://github.com/jdnavarro/network-simple-sockaddr/issues
+extra-source-files:  README.md CHANGELOG.md
 synopsis:            network-simple for resolved addresses
 extra-source-files:  README.md
 description:
