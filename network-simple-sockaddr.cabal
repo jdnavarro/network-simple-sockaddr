@@ -23,7 +23,7 @@ source-repository head
 
 library
   exposed-modules:     Network.Simple.SockAddr
-  build-depends:       base >=4.6 && <4.8,
+  build-depends:       base >=4.6 && <4.9,
                        bytestring,
                        directory,
                        transformers >=0.2,
